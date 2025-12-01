@@ -7,7 +7,7 @@
 
 # NOTE TO STUDENTS: Before running this script, you MUST update the file path
 # below to match where you saved the CSV file on your computer.
-# 
+#
 # Windows example: "C:/Users/YourName/Downloads/goal_data_2years-1.csv"
 # Mac example: "/Users/YourName/Downloads/goal_data_2years-1.csv"
 
@@ -16,7 +16,8 @@
 # ============================================================================
 
 # Replace this path with YOUR full file path to the CSV
-goal_data <- read.csv("/mnt/user-data/uploads/goal_data_2years.csv")
+# goal_data <- read.csv("/mnt/user-data/uploads/goal_data_2years.csv")
+goal_data <- read.csv("goal_data_2years.csv")
 
 # Quick check to see if data loaded correctly
 cat("Data loaded successfully!\n")
@@ -39,13 +40,13 @@ goal_data$monthly_profit <- goal_data$monthly_throughput - goal_data$operating_e
 
 # Calculate percent changes compared to previous month
 # For month 1, these will be NA (no previous month to compare)
-goal_data$pct_change_throughput <- c(NA, diff(goal_data$monthly_throughput) / 
+goal_data$pct_change_throughput <- c(NA, diff(goal_data$monthly_throughput) /
                                       head(goal_data$monthly_throughput, -1) * 100)
 
-goal_data$pct_change_inventory <- c(NA, diff(goal_data$inventory_value) / 
+goal_data$pct_change_inventory <- c(NA, diff(goal_data$inventory_value) /
                                      head(goal_data$inventory_value, -1) * 100)
 
-goal_data$pct_change_OE <- c(NA, diff(goal_data$operating_expense) / 
+goal_data$pct_change_OE <- c(NA, diff(goal_data$operating_expense) /
                               head(goal_data$operating_expense, -1) * 100)
 
 cat("Monthly metrics calculated successfully!\n\n")
@@ -61,7 +62,7 @@ oe_status <- character(nrow(goal_data))
 
 # Loop through each month and assign traffic light colors
 for (i in 1:nrow(goal_data)) {
-  
+
   # THROUGHPUT STATUS (Higher is Better)
   if (is.na(goal_data$pct_change_throughput[i])) {
     throughput_status[i] <- "Yellow"  # First month baseline
@@ -72,7 +73,7 @@ for (i in 1:nrow(goal_data)) {
   } else {
     throughput_status[i] <- "Red"     # Throughput decreasing (BAD!)
   }
-  
+
   # INVENTORY STATUS (Lower is Better)
   if (is.na(goal_data$pct_change_inventory[i])) {
     inventory_status[i] <- "Yellow"   # First month baseline
@@ -83,7 +84,7 @@ for (i in 1:nrow(goal_data)) {
   } else {
     inventory_status[i] <- "Red"      # Inventory increasing (BAD!)
   }
-  
+
   # OPERATING EXPENSE STATUS (Lower is Better)
   if (is.na(goal_data$pct_change_OE[i])) {
     oe_status[i] <- "Yellow"          # First month baseline
@@ -110,11 +111,11 @@ cat("Traffic light indicators created!\n\n")
 # Create the report with key columns
 traffic_report <- data.frame(
   Month = goal_data$month,
-  Monthly_Throughput = sprintf("$%s", format(round(goal_data$monthly_throughput, 0), 
+  Monthly_Throughput = sprintf("$%s", format(round(goal_data$monthly_throughput, 0),
                                              big.mark = ",", scientific = FALSE)),
-  Inventory_Value = sprintf("$%s", format(round(goal_data$inventory_value, 0), 
+  Inventory_Value = sprintf("$%s", format(round(goal_data$inventory_value, 0),
                                           big.mark = ",", scientific = FALSE)),
-  Operating_Expense = sprintf("$%s", format(round(goal_data$operating_expense, 0), 
+  Operating_Expense = sprintf("$%s", format(round(goal_data$operating_expense, 0),
                                            big.mark = ",", scientific = FALSE)),
   Throughput_Status = goal_data$throughput_status,
   Inventory_Status = goal_data$inventory_status,
@@ -180,7 +181,7 @@ cat("─────────────────────────
 cat("📊 Overall System Health Score:", health_score, "/ 100\n\n")
 
 # Identify the worst month (most red signals)
-month_red_counts <- apply(goal_data[, c("throughput_status", "inventory_status", "oe_status")], 
+month_red_counts <- apply(goal_data[, c("throughput_status", "inventory_status", "oe_status")],
                           1, function(x) sum(x == "Red", na.rm = TRUE))
 worst_month_idx <- which.max(month_red_counts)
 worst_month <- goal_data$month[worst_month_idx]
@@ -248,8 +249,8 @@ if (recent_oe_trend < 0) {
 cat(sprintf("(%.1f%% average change). ", recent_oe_trend))
 
 # Overall assessment
-improving_metrics <- sum(c(recent_throughput_trend > 0, 
-                           recent_inventory_trend < 0, 
+improving_metrics <- sum(c(recent_throughput_trend > 0,
+                           recent_inventory_trend < 0,
                            recent_oe_trend < 0))
 
 cat("\n\nJonah would likely say: ")
@@ -268,3 +269,4 @@ cat("you cannot optimize one at the expense of the others. True improvement mean
 cat("===============================================\n")
 cat("           END OF REPORT                      \n")
 cat("===============================================\n")
+
